@@ -3,7 +3,7 @@ package wci.frontend.pascal;
 import wci.frontend.*;
 import wci.message.Message;
 
-import static wci.message.MessageType.PARSER_SUMMARY;
+import static wci.message.MessageType.*;
 
 public class PascalParserTD extends Parser {
 
@@ -11,20 +11,38 @@ public class PascalParserTD extends Parser {
         super(scanner);
     }
 
-    public void parse() throws Exception{
+    public void parse()
+        throws Exception
+    {
         Token token;
         long startTime = System.currentTimeMillis();
 
-        while (!((token = nextToken()) instanceof EofToken)) {}
+        try {
+            while (!((token = nextToken()) instanceof EofToken)) {
+                TokenType tokenType = token.getType();
 
-        float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
-        sendMessage(new Message(PARSER_SUMMARY,
-                                new Number[] {token.getLineNumber(), // extends number => you can have integers and floats in the
-                                              getErrorCount(),      // same array
-                                                elapsedTime}));
-
+                if (tokenType != ERROR) {
+                    sendMessage(new Message(TOKEN, new Object[] {token.getLineNumber(),
+                                                                 token.getPosition(),
+                                                                 tokenType,
+                                                                 token.getText(),
+                                                                 token.getValue()}));
+                }
+                else {
+                    errorHandler.flag(token, (PascalErrorCode) token.getValue(), this);
+                }
+            }
+            float elapsedTime = (System.currentTimeMillis() - startTime)/1000f;
+            sendMessage(new Message(PARSER_SUMMARY,
+                    new Number[] {token.getLineNumber(), // extends number => you can have integers and floats in the
+                            getErrorCount(),      // same array
+                            elapsedTime}));
+        }
+        catch(java.io.IOException ex) {
+            errorHandler.abortTranslation(IO_ERROR, this);
+        }
     }
 
 
-    public int getErrorCount(){return 0;}
+    public int getErrorCount(){return errorHandler.getErrorCount();}
 }
