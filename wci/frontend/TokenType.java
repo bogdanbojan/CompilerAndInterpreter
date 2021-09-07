@@ -1,4 +1,4 @@
 package wci.frontend;
 
-public class TokenType {
+public interface TokenType {
 }

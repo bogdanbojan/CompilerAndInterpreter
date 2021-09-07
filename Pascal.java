@@ -4,7 +4,10 @@ import wci.frontend.*;
 import wci.intermediate.*;
 import wci.backend.*;
 import wci.message.*;
+
 import static wci.message.MessageType.*;
+import static wci.frontend.pascal.PascalTokenType.*;
+
 
 //TODO: implement this for the language LOX as well!!
 
@@ -105,6 +108,8 @@ public class Pascal
             "\n%, 20d source lines." +
             "\n%, 20d syntax errors." +
             "\n%, 20.2f seconds total parsing time. \n";
+
+    private static final String
 
 
     private class ParserMessageListener implements MessageListener

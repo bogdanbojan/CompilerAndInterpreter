@@ -3,10 +3,15 @@ package wci.frontend.pascal;
 import wci.frontend.*;
 import wci.message.Message;
 
+
 import static wci.message.MessageType.*;
+import static wci.frontend.pascal.PascalTokenType.*;
+import static wci.frontend.pascal.PascalErrorCode.*;
+
 
 public class PascalParserTD extends Parser {
 
+    protected static PascalErrorHandler errorHandler = new PascalErrorHandler();
     public PascalParserTD(Scanner scanner){
         super(scanner);
     }
@@ -21,7 +26,7 @@ public class PascalParserTD extends Parser {
             while (!((token = nextToken()) instanceof EofToken)) {
                 TokenType tokenType = token.getType();
 
-                if (tokenType != ERROR) {
+                if (tokenType == ERROR) {
                     sendMessage(new Message(TOKEN, new Object[] {token.getLineNumber(),
                                                                  token.getPosition(),
                                                                  tokenType,
